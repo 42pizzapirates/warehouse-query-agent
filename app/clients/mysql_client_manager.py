@@ -49,16 +49,16 @@ class MysqlClientManager:
             return
         await self.engine.dispose()
 
-dw_mysql_client = MysqlClientManager(app_config.db_dw)
-meta_mysql_client = MysqlClientManager(app_config.db_meta)
+dw_mysql_client_manager = MysqlClientManager(app_config.db_dw)
+meta_mysql_client_manager = MysqlClientManager(app_config.db_meta)
 
 
 
 if __name__ == '__main__':
-    dw_mysql_client.init()
+    dw_mysql_client_manager.init()
 
     async def test():
-        async with dw_mysql_client.session_factory() as session:
+        async with dw_mysql_client_manager.session_factory() as session:
             # 执行sql查询
             result = await session.execute(text("select * from fact_order limit 10"))
             # 提取查询结果rows对象
