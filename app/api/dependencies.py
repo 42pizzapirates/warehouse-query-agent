@@ -30,18 +30,17 @@ async def get_value_es_repository():
     return ValueESRepository(es_client_manager.client)
 
 async def get_meta_session():
-    """每次查询数据库Session每次都应该是新的Session，数据库操作完成关闭"""
+    """为每个请求创建独立的元数据库会话，请求结束后自动关闭。"""
     async with meta_mysql_client_manager.session_factory() as meta_session:
-        yield meta_session #查询前会获取到session,执行DB操作，完成DB操作后 自定关闭Session
+        yield meta_session
 
 async def get_meta_mysql_repository(session:AsyncSession = Depends(get_meta_session)):
     return MetaMySQLRepository(session)
 
 async def get_dw_session():
-    """每次查询数据库Session每次都应该是新的Session，数据库操作完成关闭"""
+    """为每个请求创建独立的数仓会话，请求结束后自动关闭。"""
     async with dw_mysql_client_manager.session_factory() as dw_session:
-        print(f"session:{dw_session}")
-        yield dw_session #查询前会获取到session,执行DB操作，完成DB操作后 自定关闭Session
+        yield dw_session
 
 
 async def get_dw_mysql_repository(session:AsyncSession = Depends(get_dw_session)):

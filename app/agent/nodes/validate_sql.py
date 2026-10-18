@@ -7,13 +7,13 @@ from app.core.log import logger
 
 
 async def validate_sql(state: DataAgentState, runtime: Runtime[DataAgentContext]):
+    """通过执行计划校验 SQL 语法，并记录可反馈给校正节点的错误。"""
+
     write = runtime.stream_writer
     write({"type": "progress", "step": "验证SQL", "status": "running"})
 
     try:
-        #1.获取state中生成SQL
         sql = state["sql"]
-        #2.调用数仓持久层通过执行计划关键字验证SQL
         dw_mysql_repository = runtime.context["dw_mysql_repository"]
         await dw_mysql_repository.validate_sql(sql)
         write({"type": "progress", "step": "验证SQL", "status": "success"})

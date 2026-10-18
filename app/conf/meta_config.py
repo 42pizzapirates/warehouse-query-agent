@@ -1,7 +1,7 @@
+"""元数据配置的数据结构定义。"""
+
 from dataclasses import dataclass
 from typing import Optional
-
-"""用于接受元信息转为对象"""
 
 @dataclass
 class ColumnConfig:

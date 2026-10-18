@@ -1,6 +1,5 @@
 <template>
   <div class="chat-page">
-    <!-- 消息区 -->
     <div ref="messagesEl" class="messages">
       <div
           v-for="(msg, index) in messages"
@@ -10,12 +9,10 @@
         <div v-if="msg.role === 'assistant'" class="avatar">🤖</div>
 
         <div class="bubble">
-          <!-- 文本 -->
           <div v-if="msg.type === 'text'">
             {{ msg.content }}
           </div>
 
-          <!-- 进度步骤 -->
           <div v-else-if="msg.type === 'steps'" class="steps">
             <div v-for="(step, sIdx) in msg.steps" :key="sIdx" class="step">
               <span class="dot" :class="step.status"></span>
@@ -23,7 +20,6 @@
             </div>
           </div>
 
-          <!-- 表格 -->
           <div v-else-if="msg.type === 'table'" class="table-wrap">
             <table class="result-table">
               <thead>
@@ -43,7 +39,6 @@
             </table>
           </div>
 
-          <!-- 错误 -->
           <div v-else-if="msg.type === 'error'" class="error-text">
             {{ msg.content }}
           </div>
@@ -54,7 +49,6 @@
       <div class="messages-bottom-spacer"></div>
     </div>
 
-    <!-- 悬浮输入框 -->
     <div class="input-wrapper">
       <div class="input-box">
         <input
@@ -95,7 +89,6 @@ async function sendQuestion() {
 
   messages.value.push({role: "user", type: "text", content: q});
 
-  // steps 容器
   const stepIndex =
       messages.value.push({
         role: "assistant",
@@ -140,7 +133,6 @@ async function sendQuestion() {
 
         const steps = messages.value[stepIndex].steps;
 
-        // ✅ progress：完全按后端状态渲染
         if (data.type === "progress") {
           let step = steps.find((s) => s.text === data.step);
 
@@ -155,7 +147,6 @@ async function sendQuestion() {
           }
         }
 
-        // ✅ 表格结果
         else if (data.type === "result" && Array.isArray(data.data)) {
           messages.value.push({
             role: "assistant",
@@ -165,7 +156,6 @@ async function sendQuestion() {
           });
         }
 
-        // ✅ 错误
         else if (data.type === "error") {
           messages.value.push({
             role: "assistant",
@@ -192,7 +182,7 @@ async function sendQuestion() {
 }
 </script>
 <style scoped>
-/* 覆盖 Vite 默认居中 */
+/* 重置 Vite 模板的全局布局约束 */
 :global(html),
 :global(body) {
   height: 100%;
@@ -211,14 +201,12 @@ async function sendQuestion() {
   padding: 0 !important;
 }
 
-/* 页面 */
 .chat-page {
   height: 100%;
   overflow: hidden;
   background: #fff;
 }
 
-/* 消息区 */
 .messages {
   height: 100%;
   overflow-y: auto;
@@ -260,7 +248,6 @@ async function sendQuestion() {
   background: #e6f4ff;
 }
 
-/* 步骤 */
 .steps {
   display: flex;
   flex-direction: column;
@@ -291,7 +278,6 @@ async function sendQuestion() {
   background: #e74c3c;
 }
 
-/* 表格 */
 .table-wrap {
   max-width: 100%;
   overflow-x: auto;
@@ -321,13 +307,11 @@ async function sendQuestion() {
   z-index: 1;
 }
 
-/* 错误 */
 .error-text {
   color: #e74c3c;
   font-weight: 600;
 }
 
-/* 悬浮输入框 */
 .input-wrapper {
   position: fixed;
   left: 0;

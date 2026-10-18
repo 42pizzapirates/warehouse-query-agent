@@ -25,16 +25,14 @@ class ColumnQdrantRepository:
             )
 
     async def upsert(self, ids:list[str], embeddings:list[list[float]], payloads:list[ColumnInfo], batch_size:int=10):
-        #1.采用zip函数，按照"索引下标"打包为元组迭代器 [(id,vector,payload),(id,vector,payload),(id,vector,payload)]
         zipped = list(zip(ids, embeddings, payloads))
 
-        #2.采用分批次保存向量数据点到qdrant
         for i in range(0, len(zipped), batch_size):
             batch = zipped[i: i+batch_size]
             points = [PointStruct(
                 id = id,
                 vector=embeding,
-                # 注意：向量点元信息必须是字典结构
+                # Qdrant payload 必须是可序列化的字典。
                 payload=asdict(payload)
             ) for id,embeding,payload in batch]
             await self.client.upsert(collection_name=self.coll_name, points=points)

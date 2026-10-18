@@ -6,6 +6,8 @@ from app.entities.value_info import ValueInfo
 
 
 class ColumnInfoState(TypedDict):
+    """字段信息在 Graph 状态中的表示。"""
+
     name: str
     type: str
     role: str
@@ -15,6 +17,8 @@ class ColumnInfoState(TypedDict):
 
 
 class TableInfoState(TypedDict):
+    """表信息在 Graph 状态中的表示。"""
+
     name: str
     role: str
     description: str
@@ -22,6 +26,8 @@ class TableInfoState(TypedDict):
 
 
 class MetricInfoState(TypedDict):
+    """指标信息在 Graph 状态中的表示。"""
+
     name: str
     description: str
     relevant_columns: list[str]
@@ -29,37 +35,33 @@ class MetricInfoState(TypedDict):
 
 
 class DateInfoState(TypedDict):
+    """生成 SQL 时使用的日期上下文。"""
+
     date: str
     weekday: str
     quarter: str
 
 
 class DBInfoState(TypedDict):
+    """数仓版本与方言信息。"""
+
     version: str
     dialect: str
 
 
 class DataAgentState(TypedDict):
-    # 提问问题
-    query: str
-    # 抽取关键字节点结果
-    keywords: list[str]
-    # 召回字段节点结果
-    retrieved_columns: list[ColumnInfo]
-    # 召回指标节点结果
-    retrieved_metrics: list[MetricInfo]
-    # 召回字段取值结果
-    retrieved_values: list[ValueInfo]
-    # 合并节点结果
-    table_infos: list[TableInfoState]  # 表信息
-    metric_infos: list[MetricInfoState]  # 指标信息
+    """Graph 各节点共享的运行时状态。"""
 
-    # 额外上下文结果
+    query: str
+    keywords: list[str]
+    retrieved_columns: list[ColumnInfo]
+    retrieved_metrics: list[MetricInfo]
+    retrieved_values: list[ValueInfo]
+    table_infos: list[TableInfoState]
+    metric_infos: list[MetricInfoState]
+
     date_info: DateInfoState
     db_info: DBInfoState
 
-    # 生成SQL结果
     sql: str
-
-    # 校验SQL节点 SQL错误信息
     error: str

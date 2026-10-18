@@ -4,7 +4,6 @@ from pathlib import Path
 from omegaconf import OmegaConf
 
 
-# 日志配置
 @dataclass
 class File:
     enable: bool
@@ -26,7 +25,6 @@ class LoggingConfig:
     console: Console
 
 
-# 数据库配置
 @dataclass
 class DBConfig:
     host: str
@@ -78,5 +76,5 @@ config_file = Path(__file__).parents[2] / 'conf' / 'app_config.yaml'
 context = OmegaConf.load(config_file)
 schema = OmegaConf.structured(AppConfig)
 
-# 创建单例配置对象
+# 合并 YAML 与强类型 schema，缺项或类型错误会在此处暴露。
 app_config: AppConfig = OmegaConf.to_object(OmegaConf.merge(schema, context))

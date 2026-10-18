@@ -21,7 +21,6 @@ class MetaMySQLRepository:
 
     async def save_table_infos(self, table_infos: list[TableInfo]):
         """批量保存表信息"""
-        #将业务实体对象TableInfo 转为 数据库ORM实体TableInfoMySQL
         models = [TableInfoMapper.to_model(table_info) for table_info in table_infos]
         self.session.add_all(models)
 
@@ -31,10 +30,14 @@ class MetaMySQLRepository:
         self.session.add_all(models)
 
     async def save_metric_info_to_meta_db(self, metric_infos:list[MetricInfo]):
+        """批量保存指标信息。"""
+
         models = [MetricInfoMapper.to_model(metric_info) for metric_info in metric_infos]
         self.session.add_all(models)
 
     async def save_column_metric_info_to_meta_db(self, column_metrics:list[ColumnMetric]):
+        """批量保存指标与字段的关联关系。"""
+
         models = [ColumnMetricMapper.to_model(column_metric) for column_metric in column_metrics]
         self.session.add_all(models)
 
@@ -48,10 +51,8 @@ class MetaMySQLRepository:
         return ColumnInfoMapper.to_entity(column_info_mysql)
 
     async def get_key_column_by_table_id(self, table_id: str) -> list[ColumnInfo]:
-        # sql = select * from column_info where table_id = ? and role in ("primary_key","foreign_key")
         stmt = select(ColumnInfoMySQL).where(ColumnInfoMySQL.table_id == table_id,
                                              ColumnInfoMySQL.role.in_(["primary_key", "foreign_key"]))
-        # ORM方式执行查库操作，底层将多列结果封装到一个对象中，scalars处理是单个元素
         result: ScalarResult = await self.session.scalars(stmt)
         return [ColumnInfoMapper.to_entity(column_info_mysql) for column_info_mysql in result]
 

@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+"""Elasticsearch 字段取值文档。"""
 
-"""保存到ES中字段枚举文档对象"""
+from dataclasses import dataclass
 
 @dataclass
 class ValueInfo:

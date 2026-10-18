@@ -8,7 +8,6 @@ class ColumnInfoMapper:
 
     @staticmethod
     def to_entity(column_info_mysql:ColumnInfoMySQL) -> ColumnInfo:
-        # 将持久层对象 转为 业务层对象 只能手动赋值
         return ColumnInfo(
             id=column_info_mysql.id,
             name=column_info_mysql.name,
@@ -21,5 +20,4 @@ class ColumnInfoMapper:
         )
     @staticmethod
     def to_model(column_info:ColumnInfo) -> ColumnInfoMySQL:
-        # 将业务层对象转为持久层对象
         return ColumnInfoMySQL(**asdict(column_info))

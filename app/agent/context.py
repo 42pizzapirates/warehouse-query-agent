@@ -9,7 +9,8 @@ from app.repositories.qdrant.metric_qdrant_repository import MetricQdrantReposit
 
 
 class DataAgentContext(TypedDict):
-    """runtime中context数据结构定义,存放静态依赖：操作不同库持久层对象 对于节点而言只读"""
+    """Graph 运行时依赖；节点只读访问各存储的持久层与嵌入客户端。"""
+
     meta_mysql_repository: MetaMySQLRepository
     dw_mysql_repository: DWMySQLRepository
     embedding_client: HuggingFaceEndpointEmbeddings

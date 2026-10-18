@@ -14,7 +14,7 @@ tables:
         role: dimension
         description: 订单所属的省份名称。
         alias: [ 省份, 省, 所在省份 ]
-        # 同步将枚举值存入到Elasticsearch 解决SQL正确 无法查询到数据
+        # 开启后同步字段枚举值到 Elasticsearch，避免 SQL 条件与真实取值不一致。
         sync: true
 
       - name: region_name

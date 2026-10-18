@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     embedding_client_manager.init()
     qdrant_client_manager.init()
     es_client_manager.init()
-    yield #项目运行期间
+    yield
     logger.info("项目关闭,执行各个客户端管理器关闭操作")
     await dw_mysql_client_manager.close()
     await meta_mysql_client_manager.close()

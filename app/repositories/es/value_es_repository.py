@@ -2,7 +2,6 @@ from dataclasses import asdict
 
 from elastic_transport import ObjectApiResponse
 from elasticsearch import AsyncElasticsearch
-from watchfiles import awatch
 
 from app.entities.value_info import ValueInfo
 
@@ -23,9 +22,7 @@ class ValueESRepository:
         self.client = client
 
     async def ensure_index(self):
-        # 判断索引库是否存在
         if not await self.client.indices.exists(index=self.idx_name):
-            # 创建索引库
             await self.client.indices.create(
                 index=self.idx_name,
                 mappings=self.es_index_mappings
@@ -36,20 +33,16 @@ class ValueESRepository:
             batch = value_infos[i:i + batch_size]
             operations: list = []
             for value_info in batch:
-                # 指定操作的索引库以及文档ID
                 operations.append({
                     "index": {
                         "_index": self.idx_name,
                         "_id": value_info.id
                     }
                 })
-                # 指定文档内容
                 operations.append(asdict(value_info))
-                # 将本批次数据批量写入ES
                 await self.client.bulk(operations=operations)
 
     async def search(self, keyword: str, score:float=0.6, limit:int=10) -> list[ValueInfo]:
-        #1.执行全文检索
         result:ObjectApiResponse = await self.client.search(
             index=self.idx_name,
             query={
@@ -60,5 +53,4 @@ class ValueESRepository:
             min_score=score,
             size=limit
         )
-        #2.解析ES响应结果
         return [ValueInfo(**hit["_source"]) for hit in result["hits"]["hits"]]
