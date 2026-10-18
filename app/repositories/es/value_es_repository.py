@@ -1,5 +1,6 @@
 from dataclasses import asdict
 
+from elastic_transport import ObjectApiResponse
 from elasticsearch import AsyncElasticsearch
 from watchfiles import awatch
 
@@ -46,3 +47,18 @@ class ValueESRepository:
                 operations.append(asdict(value_info))
                 # 将本批次数据批量写入ES
                 await self.client.bulk(operations=operations)
+
+    async def search(self, keyword: str, score:float=0.6, limit:int=10) -> list[ValueInfo]:
+        #1.执行全文检索
+        result:ObjectApiResponse = await self.client.search(
+            index=self.idx_name,
+            query={
+                "match": {
+                    "value": keyword
+                }
+            },
+            min_score=score,
+            size=limit
+        )
+        #2.解析ES响应结果
+        return [ValueInfo(**hit["_source"]) for hit in result["hits"]["hits"]]

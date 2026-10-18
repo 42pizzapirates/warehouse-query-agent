@@ -21,3 +21,34 @@ class DWMySQLRepository:
         result: Result = await self.session.execute(text(sql))
         # 结果：一列多行
         return result.scalars().fetchall()
+
+    async def get_db_info(self):
+        """
+        查询数据库环境信息，版本、方言
+        :return:
+        """
+        # 查询数据版本
+        result = await self.session.execute(text("select version()"))
+        # 解析结果
+        version = result.scalar()
+
+        # 查询数据方言
+        dialect = self.session.get_bind().dialect.name
+        return {"version": version, "dialect": dialect}
+
+    async def validate_sql(self, sql: str):
+        """
+        验证执行sql
+        :param sql:
+        :return: 如果sql语法不合法，会抛出异常
+        """
+        await self.session.execute(text(f"explain {sql}"))
+
+    async def execute_sql(self, sql):
+        """
+        执行最终的sql语句，获取结果
+        :param sql:
+        :return:
+        """
+        result:Result = await self.session.execute(text(sql))
+        return [dict(row_mapping) for row_mapping in  result.mappings().fetchall()]
